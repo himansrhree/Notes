@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Notes</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Magic Notes <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Abouts us</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Proucts
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">Notes</a>
+                        <a class="dropdown-item" href="#">Alarm clock (coming soon)</a>
+                    </div>
+                </li>
+                
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" id="searchTxt">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit" >Search</button>
+            </form>
+        </div>
+    </nav>
+    <div class="container my-5" id=mycard>
+      <h1>Welcome To Magic Notes</h1>
+            <div class="form-group">
+              <label for="addtitle">Title</label>
+              <input type="text" class="form-control" id="addtitle" aria-describedby="emailHelp">
+              <!-- <small id="emailHelp" class="form-text text-muted">Add Title Here.</small> -->
+            </div>
+            
+            <textarea rows="3" class="form-control" aria-label="With textarea" id="addnotes" placeholder="Add Notes Here"></textarea>
+            <br>
+            <button type="submit" class="btn btn-primary btn-sm" id="addbtn">Submit</button>
+            <div class="container-fluid row check" id="cardBody">
+            </div>
+    </div>
+    <script>
+        
+        var c = document.getElementById('addbtn');
+        show();
+        c.addEventListener("click", function(e){
+            var title = document.getElementById("addtitle").value;
+            var desc = document.getElementById("addnotes").value;
+            var notes = localStorage.getItem('notes');
+            if(notes == null){
+                notesobj = [];
+            }
+            else{
+                notesobj = JSON.parse(notes);
+            }
+            notesobj.push([title, desc]);
+            localStorage.setItem("notes", JSON.stringify(notesobj));
+            title.value = "";
+            desc.value = "";
+            show();
+           
+
+        })
+        function show(){
+            var notes = localStorage.getItem('notes');
+            if(notes == null){
+                notesobj = [];
+            }
+            else{
+                notesobj = JSON.parse(notes);
+            }
+
+            var cardBody = document.getElementById("cardBody");
+            var html = "";
+
+            notesobj.forEach((element, index) => {
+            html += `<div class="card my-2 mx-2" style="width: 18rem;" id="demo">
+                    <div class="card-body">
+                    <h5 class="card-title ">${element[0]}</h5>
+                    <p class="card-text ">${element[1]}</p>
+                    <a onclick="deleteNote(this.id)" id="${index}" class="btn btn-primary btn-sm">Delete</a>
+                    </div>
+                </div>`;
+            });
+            
+            var cardBody = document.getElementById("cardBody");
+            if(notesobj.length != 0){
+            cardBody.innerHTML = html;
+            }
+            else{
+                cardBody.innerHTML = `Nothing to show you. Use Submit button to add notes.`
+            }
+        }
+        function deleteNote(index) {
+            var notes = localStorage.getItem('notes');
+            if(notes == null){
+                notesobj = [];
+            }
+            else{
+                notesobj = JSON.parse(notes);
+            }
+            notesobj.splice(index, 1);
+            localStorage.setItem("notes", JSON.stringify(notesobj));
+            show();
+            
+        }
+            
+        var search= document.getElementById('searchTxt');
+        
+        
+        search.addEventListener('input', function(){
+            var searchvalue = search.value;
+           
+            var cardCheck = document.getElementsByClassName('check');
+            Array.from(cardCheck).forEach(function(element) {
+                var cardTxt = document.getElementsByTagName("h5")[0].innerText;
+                var cardTxt1 = document.getElementsByTagName("p")[0].innerText;
+                var str1 = cardTxt +" " + cardTxt1;
+                console.log(str1);
+                if(str1.includes(searchvalue)){
+                    element.style.display = "block";
+                }
+                else{
+                    element.style.display = "none";
+                }
+                
+            });
+           
+        })
+
+
+    </script>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
